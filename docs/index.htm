@@ -1,0 +1,129 @@
+<link rel="stylesheet" media="screen" href="../dist/libs/jstree/themes/default/style.min.css">
+<script type="text/javascript" src="../dist/libs/jquery.min.js"></script>
+<script type="text/javascript" src="../dist/libs/jstree/jstree.min.js"></script>
+<script type="text/javascript" src="../dist/xmlToJsTree.js"></script>
+
+<script>
+    var _xmlTree = null;
+    $(document).ready(function () {
+
+        _xmlTree = null;
+        var sampleData = $("#inputSampleXml").val()
+        console.log(sampleData)
+        var sampleXml = $.parseXML(sampleData)
+        processXML(sampleXml);
+    });
+
+    processXML = function (root) {
+        _xmlTree = new XmlToJsTree(root, $("#jstree"),
+                {
+                    "plugins": ["search", "themes", "ui", "wholerow", "contextmenu"],
+                    "core": {
+                        "data": null,
+                        "check_callback": true,
+                        "themes": {
+                            "stripes": true,
+                            "icons": false,
+                            "variant": "large"
+                        }
+                    },
+                    "contextmenu": {
+                        "items": function ($node) {
+                            return {
+                                "test_menu": {
+                                    "separator_before": false,
+                                    "separator_after": false,
+                                    "label": "Test",
+                                    "action": function (data) {
+                                        var sel = $('#jstree').jstree(true).get_selected(true)
+                                        var xPath = sel[0].a_attr.path
+                                        var isArray = false
+                                        if (sel[0].a_attr.isArray != null) {
+                                            isArray = sel[0].a_attr.isArray
+                                        }
+
+                                        alert("Selected " + xPath)
+                                    }
+                                }
+                            };
+                        }
+                    }
+                },  false, titleCreator, $("#jstree_q"));
+    }
+
+    function titleCreator(path) {
+        return ""
+    }
+
+
+</script>
+
+<body>
+
+<textarea disabled rows="10" style="width: 100%;" name="inputSampleXml" id="inputSampleXml">
+    <bookstore specialty="novel">
+        <book style="autobiography">
+            <author>
+                <first-name>Joe</first-name>
+                <last-name>Bob</last-name>
+                <award>Trenton Literary Review Honorable Mention</award>
+            </author>
+            <price>12</price>
+        </book>
+        <book style="textbook">
+            <author>
+                <first-name>Mary</first-name>
+                <last-name>Bob</last-name>
+                <publication>Selected Short Stories of
+                    <first-name>Mary</first-name>
+                    <last-name>Bob</last-name>
+                </publication>
+            </author>
+            <editor>
+                <first-name>Britney</first-name>
+                <last-name>Bob</last-name>
+            </editor>
+            <price>55</price>
+        </book>
+        <magazine style="glossy" frequency="monthly">
+            <price>2.50</price>
+            <subscription price="24" per="year"/>
+        </magazine>
+        <book style="novel" id="myfave">
+            <author>
+                <first-name>Toni</first-name>
+                <last-name>Bob</last-name>
+                <degree from="Trenton U">B.A.</degree>
+                <degree from="Harvard">Ph.D.</degree>
+                <award>Pulitzer</award>
+                <publication>Still in Trenton</publication>
+                <publication>Trenton Forever</publication>
+            </author>
+            <price intl="Canada" exchange="0.7">6.50</price>
+            <excerpt>
+                <p>It was a dark and stormy night.</p>
+
+                <p>But then all nights in Trenton seem dark and
+                    stormy to someone who has gone through what
+                    <emph>I</emph>
+                    have.
+                </p>
+                <definition-list>
+                    <term>Trenton</term>
+                    <definition>misery</definition>
+                </definition-list>
+            </excerpt>
+        </book>
+    </bookstore>
+
+</textarea>
+<div>
+    <div style="display:inline; float:left ">Search: </div>
+    <input type="text" id="jstree_q" value="" class="input"
+           style="float: left;; margin:0em auto 1em auto; display:block; padding:4px; border-radius:4px; border:1px solid silver;">
+
+</div>
+
+<div id="jstree" class="demo jstree jstree-3 jstree-default jstree-default-responsive" role="tree"
+     aria-activedescendant="j1_1"/>
+</body>
